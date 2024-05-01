@@ -8,15 +8,10 @@ const Chat = () => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const ENDP = 'localhost:3000'
-    let socket;
+    const socket = io(ENDP)
 
     useEffect(() => {
         const { name, room } = queryString.parse(location.search);
-        socket = io(ENDP,{
-            withCredentials: true,
-            extraHeaders: {
-              "my-custom-header": "abcd"
-    }})
         setName(name);
         setRoom(room);
         console.log(socket)
@@ -30,17 +25,24 @@ const Chat = () => {
         })
     },[messages])
 
-    const sendMessage = (e) => {
-        e.preventDefault();
-        if(message) {
-            socket.emit('sendMessage', message, () => setMessage(''))
-        }
+    const handleSubmit = (e) => {
+      e.preventDefault();
+
+      const messageData = {
+        mess : message,
+        username : name,
+        ro : room,
+        time: new Date()
+      };
+      socket.emit('sendMessage', messageData)
     }
+
     
   return (
     <div>
       chat
-      <input value={message} onChange={(e) => setMessage(e.target.value)} onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}/>
+      <input value={message.text} onChange={(e) => setMessage(e.target.value)}/>
+      <button onClick={handleSubmit}>send</button>
     </div>
   )
 }
