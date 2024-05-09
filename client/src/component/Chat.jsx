@@ -14,15 +14,16 @@ const Chat = () => {
         const { name, room } = queryString.parse(location.search);
         setName(name);
         setRoom(room);
-        console.log(socket)
+
+        console.log(room,name)
         socket.emit('join', {name, room})
     },[ENDP,location.search])
 
     useEffect(() => {
         socket.on('message', (message) => {
             setMessage([...messages,message])
-
         })
+        console.log(message)
     },[messages])
 
     const handleSubmit = (e) => {
